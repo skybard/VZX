@@ -79,28 +79,12 @@ namespace VZX.MvcCoreUI.Controllers
         [Route("urun-listele")]
         public IActionResult Index(string SearchProductName)
         {
-
-            //Statik veri gelmektedir.
-            var products = FakeRepository<Product>.GetAll();
-            var models = products.Select(p => new ProductIndexViewModel()
-            {
-                ProductId = p.ProductId,
-                ProductName = p.ProductName,
-                UnitPrice = p.UnitPrice,
-                UnitsInStock = p.UnitsInStock,
-                ImgURL = p.ImgURL,
-                BrandId = p.BrandId,
-                BrandName = ((BrandEnum)p.BrandId).ToString()
-            }).ToList();
-
+            List<ProductIndexViewModel> models = GetFakeRepository();
 
             //DB üzerinden veri gelmektedir.
-            var dbProducts = _productManager.GetAll();
-
-            if (!string.IsNullOrEmpty(SearchProductName))
-            {
-                dbProducts = dbProducts.Where(s => s.ProductName.ToUpper().Contains(SearchProductName.ToUpper())).ToList();
-            }
+            var dbProducts = string.IsNullOrEmpty(SearchProductName) ?
+                                    _productManager.GetAll() :
+                                    _productManager.GetAll(s => s.ProductName.ToUpper().Contains(SearchProductName.ToUpper()));
 
             models = dbProducts.Select(p => new ProductIndexViewModel()
             {
@@ -114,6 +98,23 @@ namespace VZX.MvcCoreUI.Controllers
             }).ToList();
 
             return View(models);
+        }
+
+        private static List<ProductIndexViewModel> GetFakeRepository()
+        {
+            //Statik veri gelmektedir.
+            var products = FakeRepository<Product>.GetAll();
+            var models = products.Select(p => new ProductIndexViewModel()
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                UnitPrice = p.UnitPrice,
+                UnitsInStock = p.UnitsInStock,
+                ImgURL = p.ImgURL,
+                BrandId = p.BrandId,
+                BrandName = ((BrandEnum)p.BrandId).ToString()
+            }).ToList();
+            return models;
         }
     }
 }
