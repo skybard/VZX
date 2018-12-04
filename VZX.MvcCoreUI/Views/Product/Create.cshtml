@@ -1,0 +1,80 @@
+﻿@model VZX.MvcCoreUI.Models.ProductCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Ürün Tanımlama</title>
+</head>
+<body>
+    <h4>Ürün Tanımlama</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Product.ProductId" class="control-label">Ürün No</label>
+                    <input asp-for="Product.ProductId" readonly="readonly" class="form-control" />
+                    <span asp-validation-for="Product.ProductId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.ProductName" class="control-label">Ürün Adı</label>
+                    <input asp-for="Product.ProductName" class="form-control" />
+                    <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.UnitPrice" class="control-label">Fiyat</label>
+                    <input asp-for="Product.UnitPrice" class="form-control" />
+                    <span asp-validation-for="Product.UnitPrice" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.UnitsInStock" class="control-label">Stok</label>
+                    <input asp-for="Product.UnitsInStock" class="form-control" />
+                    <span asp-validation-for="Product.UnitsInStock" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.ImgURL" class="control-label"></label>
+                    <input asp-for="Product.ImgURL" class="form-control" type="file" name="file" />
+                    <span asp-validation-for="Product.ImgURL" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.BrandId" class="control-label">Marka</label>
+                    <select asp-for="Product.BrandId" class="form-control" asp-items="@(new SelectList(Model.Brands,"BrandId","BrandName"))">
+                        <option></option>
+                    </select>
+                    <span asp-validation-for="Product.BrandId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.BrandId" class="control-label">Marka (SelectListItem)</label>
+                    <select asp-for="Product.BrandId" class="form-control" asp-items="@Model.SelectBrandsItem">
+                        <option></option>
+                    </select>
+                    <span asp-validation-for="Product.BrandId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Product.BrandId" class="control-label">Marka (Enum)</label>
+                    <select asp-for="Product.BrandId" class="form-control" asp-items="Html.GetEnumSelectList<VZX.MvcCoreUI.Enums.BrandEnum>()">
+                        <option></option>
+                    </select>
+                    <span asp-validation-for="Product.BrandId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Kaydet" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Ürün Listesi</a>
+    </div>
+
+</body>
+</html>
