@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using VZX.MvcCoreUI.Business.Abstract;
+using VZX.MvcCoreUI.Business.Concrete;
 using VZX.MvcCoreUI.DataAccess.Abstract;
 using VZX.MvcCoreUI.DataAccess.Concrete;
 using VZX.MvcCoreUI.DataAccess.Concrete.EntityFramework;
@@ -52,7 +54,7 @@ namespace VZX.MvcCoreUI
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.AddSingleton<IProductServices, ProductManager>();
+            services.AddScoped<IProductServices, ProductManager>();
             services.AddScoped<IProductDal, EfProductDal>();
         }
 

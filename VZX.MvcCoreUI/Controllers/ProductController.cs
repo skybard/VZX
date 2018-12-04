@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using VZX.MvcCoreUI.Business.Abstract;
 using VZX.MvcCoreUI.DataAccess.Abstract;
 using VZX.MvcCoreUI.Entities.Concrete;
 using VZX.MvcCoreUI.Enums;
@@ -18,19 +19,13 @@ namespace VZX.MvcCoreUI.Controllers
     {
 
         private readonly IFileProvider _fileProvider;
-        private readonly IProductDal _productManager;
+        private readonly IProductServices _productManager;
 
-        public ProductController(IFileProvider fileProvider, IProductDal productManager)
+        public ProductController(IFileProvider fileProvider, IProductServices productManager)
         {
             _fileProvider = fileProvider;
             _productManager = productManager;
         }
-
-        //public ProductController(IFileProvider fileProvider)
-        //{
-        //    _fileProvider = fileProvider;
-        //}
-
 
         public IActionResult Create()
         {
