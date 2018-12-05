@@ -12,6 +12,7 @@ using VZX.MvcCoreUI.Business.Concrete;
 using VZX.MvcCoreUI.DataAccess.Abstract;
 using VZX.MvcCoreUI.DataAccess.Concrete;
 using VZX.MvcCoreUI.DataAccess.Concrete.EntityFramework;
+using VZX.MvcCoreUI.DataAccess.Concrete.FakeRepository;
 
 namespace VZX.MvcCoreUI
 {
@@ -38,24 +39,18 @@ namespace VZX.MvcCoreUI
                             new PhysicalFileProvider(
                                 Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
-            ///1. Yöntem  appsettings
-            services.AddDbContext<VZXDbContext>(options => options.UseSqlServer(Configuration["dbConnection"]));
+            //1. Yöntem  appsettings
+            //services.AddDbContext<VZXDbContext>(options => options.UseSqlServer(Configuration["dbConnection"]));
 
-            //services.AddEntityFrameworkSqlServer()
-            //      .AddDbContext<VZXDbContext>(options =>
-            //      {
-            //          options.UseSqlServer(Configuration["dbConnection"],
-            //                               sqlOptions => sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().
-            //                                                                                    Assembly.GetName().Name));
-            //      },
-            //      ServiceLifetime.Scoped
-            //      );
+            //2. Yöntem  appsettings
+            services.AddDbContext<VZXDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddScoped<IProductServices, ProductManager>();
-            services.AddScoped<IProductDal, EfProductDal>();
+            //services.AddScoped<IProductDal, EfProductDal>(); //DB üzerinden veri gelmektedir.
+            services.AddScoped<IProductDal, FakeProductDal>(); //Static veri gelmektedir.
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

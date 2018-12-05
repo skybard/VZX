@@ -1,4 +1,4 @@
-﻿@model VZX.MvcCoreUI.Models.ProductCreateViewModel
+﻿@model ProductCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -40,9 +40,9 @@
                     <span asp-validation-for="Product.UnitsInStock" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Product.ImgURL" class="control-label"></label>
-                    <input asp-for="Product.ImgURL" class="form-control" type="file" name="file" />
-                    <span asp-validation-for="Product.ImgURL" class="text-danger"></span>
+                    <label asp-for="ImageFile" class="control-label"></label>
+                    <input asp-for="ImageFile" class="form-control" type="file" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Product.BrandId" class="control-label">Marka</label>

@@ -54,23 +54,20 @@ namespace VZX.MvcCoreUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductCreateViewModel productViewModel, IFormFile file)
+        public async Task<IActionResult> Create(ProductCreateViewModel productViewModel)
         {
 
-            if (file == null || file.Length == 0)
-                return Content("file not selected");
+            if (productViewModel.ImageFile == null || productViewModel.ImageFile.Length == 0)
+                return Content("Resim seçilmedi");
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", file.GetFilename());
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", productViewModel.ImageFile.GetFilename());
 
             using (var stream = new FileStream(path, FileMode.Create))
             {
-                await file.CopyToAsync(stream);
+                await productViewModel.ImageFile.CopyToAsync(stream);
             }
 
-            productViewModel.Product.ImgURL = $"~/images/{file.GetFilename()}";
-
-            FakeRepository<Product>.Add(productViewModel.Product);
-
+            productViewModel.Product.ImgURL = $"~/images/{productViewModel.ImageFile.GetFilename()}";
             _productManager.Add(productViewModel.Product);
 
             return RedirectToAction("Index");
@@ -79,14 +76,11 @@ namespace VZX.MvcCoreUI.Controllers
         [Route("urun-listele")]
         public IActionResult Index(string SearchProductName)
         {
-            List<ProductIndexViewModel> models = GetFakeRepository();
-
-            //DB üzerinden veri gelmektedir.
             var dbProducts = string.IsNullOrEmpty(SearchProductName) ?
                                     _productManager.GetAll() :
                                     _productManager.GetAll(s => s.ProductName.ToUpper().Contains(SearchProductName.ToUpper()));
 
-            models = dbProducts.Select(p => new ProductIndexViewModel()
+            List<ProductIndexViewModel> models = dbProducts.Select(p => new ProductIndexViewModel()
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -98,23 +92,6 @@ namespace VZX.MvcCoreUI.Controllers
             }).ToList();
 
             return View(models);
-        }
-
-        private static List<ProductIndexViewModel> GetFakeRepository()
-        {
-            //Statik veri gelmektedir.
-            var products = FakeRepository<Product>.GetAll();
-            var models = products.Select(p => new ProductIndexViewModel()
-            {
-                ProductId = p.ProductId,
-                ProductName = p.ProductName,
-                UnitPrice = p.UnitPrice,
-                UnitsInStock = p.UnitsInStock,
-                ImgURL = p.ImgURL,
-                BrandId = p.BrandId,
-                BrandName = ((BrandEnum)p.BrandId).ToString()
-            }).ToList();
-            return models;
         }
     }
 }
