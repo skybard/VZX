@@ -8,40 +8,40 @@ using VZX.MvcCoreUI.Entities.Concrete;
 
 namespace VZX.MvcCoreUI.DataAccess.Concrete.EntityFramework
 {
-    public class EfProductDal : IProductDal
+    public class EfBrandDal : IBrandDal
     {
         private readonly VZXDbContext _context;
 
-        public EfProductDal(VZXDbContext context)
+        public EfBrandDal(VZXDbContext context)
         {
             _context = context;
         }
 
-        public void Add(Product entity)
+        public void Add(Brand entity)
         {
             _context.Entry(entity).State = EntityState.Added;
             _context.SaveChanges();
         }
 
-        public void Delete(Product entity)
+        public void Delete(Brand entity)
         {
             _context.Entry(entity).State = EntityState.Deleted;
             _context.SaveChanges();
         }
 
-        public Product Get(Expression<Func<Product, bool>> filter)
+        public Brand Get(Expression<Func<Brand, bool>> filter)
         {
-            return _context.Set<Product>().SingleOrDefault(filter);
+            return _context.Set<Brand>().SingleOrDefault(filter);
         }
 
-        public List<Product> GetAll(Expression<Func<Product, bool>> filter = null)
+        public List<Brand> GetAll(Expression<Func<Brand, bool>> filter = null)
         {
             return filter == null ?
-                _context.Set<Product>().Include(c => c.Brand).ToList() :
-                _context.Set<Product>().Where(filter).Include(c => c.Brand).ToList();
+                _context.Set<Brand>().ToList() :
+                _context.Set<Brand>().Where(filter).ToList();
         }
 
-        public void Update(Product entity)
+        public void Update(Brand entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
             _context.SaveChanges();

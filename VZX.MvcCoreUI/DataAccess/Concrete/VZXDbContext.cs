@@ -11,5 +11,14 @@ namespace VZX.MvcCoreUI.DataAccess.Concrete
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>()
+                .HasOne<Brand>(p => p.Brand)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BrandId);
+        }
     }
 }

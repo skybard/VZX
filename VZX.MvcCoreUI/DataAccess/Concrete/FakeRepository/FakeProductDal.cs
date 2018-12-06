@@ -29,9 +29,26 @@ namespace VZX.MvcCoreUI.DataAccess.Concrete.FakeRepository
 
         public List<Product> GetAll(Expression<Func<Product, bool>> filter = null)
         {
-            return filter == null ?
-                    _context.ToList() :
-                    _context.Where(filter.Compile()).ToList();
+            var brands = new FakeBrandDal().GetAll();
+            var products = filter == null ?
+                            _context.ToList() :
+                            _context.Where(filter.Compile()).ToList();
+
+            var models = (from productItem in _context.ToList()
+                          join brandItem in brands
+                          on productItem.BrandId equals brandItem.BrandId
+                          select new Product
+                          {
+                              ProductId = productItem.ProductId,
+                              ProductName = productItem.ProductName,
+                              ImgURL = productItem.ImgURL,
+                              UnitPrice = productItem.UnitPrice,
+                              UnitsInStock = productItem.UnitsInStock,
+                              BrandId = productItem.BrandId,
+                              Brand = brandItem
+                          }).ToList();
+
+            return models;
         }
 
         public void Update(Product entity)

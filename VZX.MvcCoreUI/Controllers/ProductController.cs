@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.FileProviders;
@@ -17,26 +18,20 @@ namespace VZX.MvcCoreUI.Controllers
 {
     public class ProductController : Controller
     {
-
-        private readonly IFileProvider _fileProvider;
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IProductServices _productManager;
+        private readonly IBrandServices _brandManager;
 
-        public ProductController(IFileProvider fileProvider, IProductServices productManager)
+        public ProductController(IHostingEnvironment hostingEnvironment, IProductServices productManager, IBrandServices brandManager)
         {
-            _fileProvider = fileProvider;
+            _hostingEnvironment = hostingEnvironment;
             _productManager = productManager;
+            _brandManager = brandManager;
         }
 
         public IActionResult Create()
         {
-            var brands = new List<Brand>
-            {
-                    new Brand{ BrandId=1, BrandName="Mercedes"},
-                    new Brand{ BrandId=2, BrandName="BMW"},
-                    new Brand{ BrandId=3, BrandName="Volkswagen"},
-                    new Brand{ BrandId=4, BrandName="Honda"},
-                    new Brand{ BrandId=5, BrandName="Volvo"}
-            };
+            var brands = _brandManager.GetAll();
 
             var brandListItems = brands.Select(s => new SelectListItem
             {
@@ -60,16 +55,17 @@ namespace VZX.MvcCoreUI.Controllers
             if (productViewModel.ImageFile == null || productViewModel.ImageFile.Length == 0)
                 return Content("Resim seçilmedi");
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", productViewModel.ImageFile.GetFilename());
+            //var path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", @"images", productViewModel.ImageFile.GetFilename());
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, @"images", productViewModel.ImageFile.GetFilename());
 
             using (var stream = new FileStream(path, FileMode.Create))
             {
                 await productViewModel.ImageFile.CopyToAsync(stream);
             }
 
-            productViewModel.Product.ImgURL = $"~/images/{productViewModel.ImageFile.GetFilename()}";
-            _productManager.Add(productViewModel.Product);
+            productViewModel.Product.ImgURL = Path.Combine(@"images", productViewModel.ImageFile.GetFilename());
 
+            _productManager.Add(productViewModel.Product);
             return RedirectToAction("Index");
         }
 
@@ -88,7 +84,7 @@ namespace VZX.MvcCoreUI.Controllers
                 UnitsInStock = p.UnitsInStock,
                 ImgURL = p.ImgURL,
                 BrandId = p.BrandId,
-                BrandName = ((BrandEnum)p.BrandId).ToString()
+                BrandName = p.Brand.BrandName
             }).ToList();
 
             return View(models);

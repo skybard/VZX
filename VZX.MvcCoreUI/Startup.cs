@@ -49,8 +49,11 @@ namespace VZX.MvcCoreUI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddScoped<IProductServices, ProductManager>();
-            //services.AddScoped<IProductDal, EfProductDal>(); //DB üzerinden veri gelmektedir.
-            services.AddScoped<IProductDal, FakeProductDal>(); //Static veri gelmektedir.
+            services.AddScoped<IBrandServices, BrandManager>();
+            services.AddScoped<IProductDal, EfProductDal>(); //DB üzerinden veri gelmektedir.
+            services.AddScoped<IBrandDal, EfBrandDal>(); //DB üzerinden veri gelmektedir.
+            //services.AddScoped<IProductDal, FakeProductDal>(); //Static veri gelmektedir.
+            //services.AddScoped<IBrandDal, FakeBrandDal>(); //Static veri gelmektedir.
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

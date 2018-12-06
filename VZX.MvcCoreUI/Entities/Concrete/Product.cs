@@ -11,5 +11,6 @@ namespace VZX.MvcCoreUI.Entities.Concrete
         public Int16 UnitsInStock { get; set; }
         public string ImgURL { get; set; }
         public int BrandId { get; set; }
+        public Brand Brand { get; set; }
     }
 }
