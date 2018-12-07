@@ -66,12 +66,15 @@ namespace VZX.MvcCoreUI.Controllers
             productViewModel.Product.ImgURL = Path.Combine(@"images", productViewModel.ImageFile.GetFilename());
 
             _productManager.Add(productViewModel.Product);
+
             return RedirectToAction("Index");
         }
 
         [Route("urun-listele")]
         public IActionResult Index(string SearchProductName)
         {
+            HttpContext.Session.Set("BMW", new Brand() { BrandId = 2, BrandName = "BMW" });
+
             var dbProducts = string.IsNullOrEmpty(SearchProductName) ?
                                     _productManager.GetAll() :
                                     _productManager.GetAll(s => s.ProductName.ToUpper().Contains(SearchProductName.ToUpper()));
@@ -88,6 +91,11 @@ namespace VZX.MvcCoreUI.Controllers
             }).ToList();
 
             return View(models);
+        }
+
+        public JsonResult SessionList()
+        {
+            return Json(HttpContext.Session.Get<Product>("BMW"));
         }
     }
 }

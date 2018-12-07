@@ -13,6 +13,7 @@ using VZX.MvcCoreUI.DataAccess.Abstract;
 using VZX.MvcCoreUI.DataAccess.Concrete;
 using VZX.MvcCoreUI.DataAccess.Concrete.EntityFramework;
 using VZX.MvcCoreUI.DataAccess.Concrete.FakeRepository;
+using VZX.MvcCoreUI.DataAccess.Concrete.SessionRepository;
 
 namespace VZX.MvcCoreUI
 {
@@ -39,21 +40,27 @@ namespace VZX.MvcCoreUI
                             new PhysicalFileProvider(
                                 Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
+            services.AddSession();
             //1. Yöntem  appsettings
             //services.AddDbContext<VZXDbContext>(options => options.UseSqlServer(Configuration["dbConnection"]));
 
             //2. Yöntem  appsettings
             services.AddDbContext<VZXDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddHttpContextAccessor();
+            services.AddScoped<IBrandDal, FakeBrandDal>(); //Static veri gelmektedir.
+            services.AddSingleton<IProductDal, SessionProductDal>();
+            services.AddScoped<IProductServices, ProductManager>();
+            services.AddScoped<IBrandServices, BrandManager>();
+            //services.AddScoped<IProductDal, EfProductDal>(); //DB üzerinden veri gelmektedir.
+            //services.AddScoped<IBrandDal, EfBrandDal>(); //DB üzerinden veri gelmektedir.
+           
+     
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddScoped<IProductServices, ProductManager>();
-            services.AddScoped<IBrandServices, BrandManager>();
-            services.AddScoped<IProductDal, EfProductDal>(); //DB üzerinden veri gelmektedir.
-            services.AddScoped<IBrandDal, EfBrandDal>(); //DB üzerinden veri gelmektedir.
-            //services.AddScoped<IProductDal, FakeProductDal>(); //Static veri gelmektedir.
-            //services.AddScoped<IBrandDal, FakeBrandDal>(); //Static veri gelmektedir.
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,6 +78,8 @@ namespace VZX.MvcCoreUI
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+
+            app.UseSession();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
